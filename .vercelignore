@@ -1,0 +1,7 @@
+backend/
+database/
+docs/
+docker-compose.yml
+render.yaml
+*.md
+!README.md

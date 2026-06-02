@@ -46,14 +46,16 @@ Default seeded user after `seed_lms`:
 ### 3) Frontend (Vercel)
 
 1. Import GitHub repo in Vercel.
-2. Keep repository root (uses [`vercel.json`](vercel.json)).
+2. **Recommended:** Project Settings → General → **Root Directory** = `frontend` → Save.
 3. Set environment variable:
 
 - `NEXT_PUBLIC_API_URL=https://<your-render-backend-url>`
 
-4. Deploy.
+4. Deploy (clear build cache once if a previous deploy failed).
 
-Alternative: set Vercel **Root Directory** to `frontend` and use default Next.js settings.
+If you keep the repository root as project root, the root [`package.json`](package.json) includes `next` so Vercel can detect the framework; builds still run from `frontend/` via [`vercel.json`](vercel.json).
+
+**Backend is Django only** — there is no Node API in this repo. Deploy API separately (Render) using the `backend/` folder.
 
 ## Local development
 

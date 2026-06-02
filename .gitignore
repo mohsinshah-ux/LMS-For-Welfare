@@ -33,6 +33,15 @@ backend/prisma/dev.db*
 backend/db.sqlite3
 backend/staticfiles/
 
+# Removed Node/Nest backend (Django only)
+backend/package.json
+backend/package-lock.json
+backend/node_modules/
+backend/src/
+backend/prisma/
+backend/tsconfig.json
+backend/nest-cli.json
+
 # Vercel
 .vercel/
 
