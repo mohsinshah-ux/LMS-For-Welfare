@@ -1,18 +1,12 @@
 import type { NextConfig } from 'next';
 
-const backendUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
-
+/**
+ * Do NOT proxy /api to localhost here — Vercel server-side rewrites cannot reach
+ * private hosts (DNS_HOSTNAME_RESOLVED_PRIVATE). The browser calls NEXT_PUBLIC_API_URL directly.
+ */
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${backendUrl}/:path*`
-      }
-    ];
-  },
   async headers() {
     return [
       {

@@ -38,7 +38,8 @@ gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
 - `DJANGO_SECRET_KEY` (random secure value)
 - `DJANGO_DEBUG=False`
 - `DATABASE_URL` (Render PostgreSQL connection string)
-- `CORS_ALLOWED_ORIGINS=https://your-app.vercel.app`
+- `CORS_ALLOWED_ORIGINS=https://your-app.vercel.app` (exact Vercel URL, no trailing slash)
+- `DJANGO_ALLOWED_HOSTS=your-api.onrender.com`
 
 Or use the included [`render.yaml`](render.yaml) blueprint.
 
@@ -52,9 +53,11 @@ Default seeded user after `seed_lms`:
 1. Import GitHub repo in Vercel.
 2. **Required:** Project Settings → General → **Root Directory** = `frontend` → Save.
 3. **Do not** set a custom Output Directory in Vercel (leave default `.next`). The app builds to `frontend/.next` automatically when root is `frontend`.
-4. Set environment variable:
+4. Set environment variable (critical for login):
 
 - `NEXT_PUBLIC_API_URL=https://<your-render-backend-url>`
+- Must be **public HTTPS** (your Render URL). **Never** use `localhost`, `127.0.0.1`, or private IPs — Vercel cannot reach them (`DNS_HOSTNAME_RESOLVED_PRIVATE`).
+- The browser calls this URL directly (no `/api` proxy).
 
 5. Set Vercel **Production Branch** to `main` (not auto `vercel/*` security branches).
 6. Deploy with **Clear build cache** if you see `Permission denied` on `next build`.
