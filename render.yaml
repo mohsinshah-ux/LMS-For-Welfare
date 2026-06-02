@@ -3,7 +3,7 @@ services:
     name: islamic-lms-api
     runtime: python
     rootDir: backend
-    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput
+    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py seed_lms
     startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DJANGO_SECRET_KEY
@@ -15,7 +15,11 @@ services:
           name: islamic-lms-db
           property: connectionString
       - key: CORS_ALLOWED_ORIGINS
-        sync: false
+        value: https://lms-for-welfare.vercel.app
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://lms-for-welfare.vercel.app
+      - key: DJANGO_ALLOWED_HOSTS
+        value: islamic-lms-api.onrender.com
 
 databases:
   - name: islamic-lms-db

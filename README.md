@@ -8,6 +8,11 @@
 
 See [docs/push-to-main.md](docs/push-to-main.md).
 
+## Live app
+
+- Frontend: [https://lms-for-welfare.vercel.app](https://lms-for-welfare.vercel.app)
+- Full env checklist: [docs/DEPLOY-lms-for-welfare.md](docs/DEPLOY-lms-for-welfare.md)
+
 ## Deploy from GitHub
 
 ### 1) GitHub CI
@@ -55,8 +60,9 @@ Default seeded user after `seed_lms`:
 3. **Do not** set a custom Output Directory in Vercel (leave default `.next`). The app builds to `frontend/.next` automatically when root is `frontend`.
 4. Set environment variable (critical for login):
 
-- `NEXT_PUBLIC_API_URL=https://<your-render-backend-url>`
-- Must be **public HTTPS** (your Render URL). **Never** use `localhost`, `127.0.0.1`, or private IPs — Vercel cannot reach them (`DNS_HOSTNAME_RESOLVED_PRIVATE`).
+- `NEXT_PUBLIC_API_URL=https://islamic-lms-api.onrender.com` (use your real Render URL)
+- Must be **public HTTPS**. **Never** `localhost` or `127.0.0.1` on Vercel.
+- On Render set `CORS_ALLOWED_ORIGINS=https://lms-for-welfare.vercel.app`
 - The browser calls this URL directly (no `/api` proxy).
 
 5. Set Vercel **Production Branch** to `main` (not auto `vercel/*` security branches).

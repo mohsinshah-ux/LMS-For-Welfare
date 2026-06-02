@@ -119,7 +119,8 @@ REST_FRAMEWORK = {
     ),
 }
 
-_cors_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+_default_frontend_origin = "https://lms-for-welfare.vercel.app"
+_cors_origins = os.environ.get("CORS_ALLOWED_ORIGINS", _default_frontend_origin)
 CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(",") if o.strip()]
 CORS_ALLOW_CREDENTIALS = False
 CORS_ALLOWED_ORIGIN_REGEXES = [
