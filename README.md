@@ -8,6 +8,10 @@
 
 See [docs/push-to-main.md](docs/push-to-main.md).
 
+## Database on Supabase (optional)
+
+Use Supabase for PostgreSQL and Render only for the Django API: [docs/SUPABASE-DATABASE.md](docs/SUPABASE-DATABASE.md).
+
 ## Live app
 
 - Frontend: [https://lms-for-welfare.vercel.app](https://lms-for-welfare.vercel.app)
