@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permissions } from '../../common/decorators/permissions.decorator';
 import { CreateFinancingApplicationDto } from './dto/create-financing-application.dto';
@@ -18,13 +18,17 @@ export class FinancingApplicationsController {
 
   @Post()
   @Permissions('financing_applications.create')
-  create(@Body() dto: CreateFinancingApplicationDto) {
-    return this.service.create(dto);
+  create(@Body() dto: CreateFinancingApplicationDto, @Req() req: { user?: { sub?: string } }) {
+    return this.service.create(dto, req.user?.sub);
   }
 
   @Patch(':id/status')
   @Permissions('financing_applications.status.update')
-  updateStatus(@Body() dto: UpdateApplicationStatusDto) {
-    return this.service.updateStatus(dto);
+  updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateApplicationStatusDto,
+    @Req() req: { user?: { sub?: string } }
+  ) {
+    return this.service.updateStatus(id, dto, req.user?.sub);
   }
 }

@@ -35,11 +35,14 @@ Enterprise-grade Islamic Financing Loan Management System built with:
 
 ### Backend
 
-1. `cd backend`
-2. `npm install`
-3. Copy `.env.example` to `.env` and update values
-4. Run migrations/schema initialization against PostgreSQL
-5. `npm run start:dev`
+1. `docker compose up -d`
+2. `cd backend`
+3. `npm install`
+4. Copy `.env.example` to `.env`
+5. `npm run prisma:generate`
+6. `npm run prisma:migrate -- --name init`
+7. `npm run prisma:seed`
+8. `npm run start:dev`
 
 ### Frontend
 
@@ -48,7 +51,55 @@ Enterprise-grade Islamic Financing Loan Management System built with:
 3. Copy `.env.example` to `.env.local`
 4. `npm run dev`
 
+### Seeded Admin Credentials
+
+- Username: `superadmin`
+- Email: `admin@lms.local`
+- Password: `Admin@123`
+
+## Production Deploy (GitHub + Vercel)
+
+### 1) GitHub Repository
+
+1. Ensure these files exist and are committed:
+   - `.gitignore`
+   - `.github/workflows/ci.yml`
+   - `vercel.json`
+2. Push to `main` branch:
+   - `git add .`
+   - `git commit -m "prepare production deployment for github and vercel"`
+   - `git push origin main`
+
+### 2) Backend Deployment (Required before Vercel frontend)
+
+Deploy `backend/` to your server/platform (Railway, Render, VPS, ECS, etc.) with:
+
+- Build command: `npm install && npm run prisma:generate && npm run build`
+- Start command: `npm run start`
+- Required environment variables:
+  - See `backend/.env.production.example`
+
+After deploy, run migrations against production DB:
+
+- `npm run prisma:migrate -- --name init`
+- `npm run prisma:seed` (optional for initial admin user)
+
+### 3) Frontend Deployment on Vercel
+
+1. Import GitHub repository in Vercel.
+2. Keep project root as repository root (uses `vercel.json`), or set root to `frontend`.
+3. Add environment variable:
+   - `NEXT_PUBLIC_API_URL` = your backend public URL
+4. Deploy.
+
+### 4) Vercel + API CORS Alignment
+
+Set backend `CORS_ORIGIN` to your Vercel domain:
+
+- Example: `https://your-project.vercel.app`
+
 ## Notes
 
 - This is a robust starter foundation designed for enterprise extension.
 - Business-critical financial logic should be covered by integration and reconciliation tests before go-live.
+- Vercel hosts the frontend. Backend should run on a Node-friendly host with PostgreSQL connectivity.

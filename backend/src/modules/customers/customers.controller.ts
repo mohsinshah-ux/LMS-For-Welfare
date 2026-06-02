@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permissions } from '../../common/decorators/permissions.decorator';
 import { CreateCustomerDto } from './dto/create-customer.dto';
@@ -17,7 +17,7 @@ export class CustomersController {
 
   @Post()
   @Permissions('customers.create')
-  create(@Body() dto: CreateCustomerDto) {
-    return this.customersService.create(dto);
+  create(@Body() dto: CreateCustomerDto, @Req() req: { user?: { sub?: string } }) {
+    return this.customersService.create(dto, req.user?.sub);
   }
 }
