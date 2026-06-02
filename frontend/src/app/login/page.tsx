@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiFetch } from '@/lib/api';
+import { apiFetch, getApiBase } from '@/lib/api';
 
 type LoginResponse = {
   accessToken: string;
@@ -42,6 +42,12 @@ export default function LoginPage() {
       <form onSubmit={onSubmit} className="w-full max-w-md rounded-xl border bg-white p-6 shadow-sm">
         <h1 className="text-xl font-semibold text-slate-900">Islamic LMS Login</h1>
         <p className="mb-4 mt-1 text-sm text-slate-600">Use seeded admin credentials to sign in.</p>
+        <p className="mb-4 text-xs text-slate-500">
+          API: {getApiBase()}
+          {process.env.NEXT_PUBLIC_API_URL
+            ? ` → ${process.env.NEXT_PUBLIC_API_URL}`
+            : ' (set NEXT_PUBLIC_API_URL on Vercel to your Django backend)'}
+        </p>
 
         <label className="mb-2 block text-sm text-slate-700">Username or Email</label>
         <input

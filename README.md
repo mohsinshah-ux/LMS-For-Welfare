@@ -48,11 +48,19 @@ Default seeded user after `seed_lms`:
 1. Import GitHub repo in Vercel.
 2. **Required:** Project Settings → General → **Root Directory** = `frontend` → Save.
 3. **Do not** set a custom Output Directory in Vercel (leave default `.next`). The app builds to `frontend/.next` automatically when root is `frontend`.
-4. Set environment variable:
+4. Set environment variable on **Vercel** (required for login):
 
-- `NEXT_PUBLIC_API_URL=https://<your-render-backend-url>`
+- `NEXT_PUBLIC_API_URL=https://<your-render-backend-url>` (must be `https`, no trailing slash)
 
-5. Deploy (clear build cache once if a previous deploy failed).
+The frontend calls `/api/*` on the same domain; Vercel proxies those requests to your Django backend (fixes CORS / "Failed to fetch").
+
+5. On **Render** (backend), set:
+
+- `CORS_ALLOWED_ORIGINS=https://<your-vercel-app>.vercel.app`
+- `CSRF_TRUSTED_ORIGINS=https://<your-vercel-app>.vercel.app`
+- Run `python manage.py migrate` and `python manage.py seed_lms` after deploy
+
+6. Deploy (clear build cache once if a previous deploy failed).
 
 Vercel config for the frontend lives in [`frontend/vercel.json`](frontend/vercel.json) only. There is no root `vercel.json` (it caused `frontend/frontend/.next` path errors).
 
