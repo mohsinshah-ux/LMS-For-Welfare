@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:935632ba397740587d24b6566887263f92d31a0915b8d5f3f16169b469bf9c36
-size 64
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src"
+}
