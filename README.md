@@ -87,10 +87,12 @@ After deploy, run migrations against production DB:
 ### 3) Frontend Deployment on Vercel
 
 1. Import GitHub repository in Vercel.
-2. Keep project root as repository root (uses `vercel.json`), or set root to `frontend`.
+2. Keep project root as repository root (uses `vercel.json` custom build commands).
 3. Add environment variable:
    - `NEXT_PUBLIC_API_URL` = your backend public URL
 4. Deploy.
+
+If Vercel still shows Next.js auto-detection warnings, clear project build cache and redeploy. The repo uses custom commands and does not rely on framework auto-detection.
 
 ### 4) Vercel + API CORS Alignment
 
