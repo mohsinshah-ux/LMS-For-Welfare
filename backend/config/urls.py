@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.urls import include, path
 
+from config.health import health
+
 urlpatterns = [
+    path("health", health),
     path("admin/", admin.site.urls),
     path("auth/", include("apps.auth_app.urls")),
     path("customers/", include("apps.customer_app.urls")),

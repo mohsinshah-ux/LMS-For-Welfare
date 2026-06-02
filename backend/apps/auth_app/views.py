@@ -15,11 +15,14 @@ class LoginView(views.APIView):
         user = serializer.validated_data["user"]
         refresh = RefreshToken.for_user(user)
         user_data = UserSerializer(user).data
+        user_data["roles"] = []
+        user_data["permissions"] = []
         return Response(
             {
                 "accessToken": str(refresh.access_token),
                 "refreshToken": str(refresh),
                 "tokenType": "Bearer",
+                "expiresIn": "15m",
                 "user": user_data,
             },
             status=status.HTTP_200_OK,

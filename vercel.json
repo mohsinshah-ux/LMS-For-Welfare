@@ -1,6 +1,7 @@
 {
-  "framework": null,
-  "installCommand": "cd frontend && rm -f package-lock.json && npm install --no-audit --no-fund --legacy-peer-deps",
-  "buildCommand": "cd frontend && npm run build",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "installCommand": "npm install --prefix frontend --no-audit --no-fund --legacy-peer-deps",
+  "buildCommand": "npm run build --prefix frontend",
   "outputDirectory": "frontend/.next"
 }

@@ -1,5 +1,13 @@
+from calendar import monthrange
 from datetime import date
-from dateutil.relativedelta import relativedelta  # install python-dateutil if needed
+
+
+def add_months(base: date, months: int) -> date:
+    month_index = base.month - 1 + months
+    year = base.year + month_index // 12
+    month = month_index % 12 + 1
+    day = min(base.day, monthrange(year, month)[1])
+    return date(year, month, day)
 
 from rest_framework import generics, permissions, status, views
 from rest_framework.response import Response
@@ -58,7 +66,7 @@ class InstallmentGenerateView(views.APIView):
         first_due = date(year, month, day)
         created = []
         for i in range(count):
-            due = first_due + relativedelta(months=i)
+            due = add_months(first_due, i)
             total = principal + profit
             created.append(
                 Installment(

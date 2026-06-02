@@ -8,26 +8,25 @@ from .models import Payment
 from .serializers import PaymentSerializer
 
 
-class PaymentListView(generics.ListAPIView):
+class PaymentListCreateView(generics.ListCreateAPIView):
     queryset = Payment.objects.all().order_by("-created_at")
     serializer_class = PaymentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-
-class PaymentCreateView(generics.CreateAPIView):
-    serializer_class = PaymentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
     def perform_create(self, serializer):
-        installment = Installment.objects.get(pk=self.request.data.get("installment"))
-        amount = Decimal(self.request.data.get("amount_paid"))
+        installment_id = self.request.data.get("installmentId") or self.request.data.get("installment")
+        installment = Installment.objects.get(pk=installment_id)
+        amount = Decimal(str(self.request.data.get("amountPaid") or self.request.data.get("amount_paid")))
         remaining = max(Decimal("0"), installment.outstanding_amount - amount)
         installment.paid_amount += amount
         installment.outstanding_amount = remaining
         if remaining == 0:
             installment.status = "paid"
-        elif remaining < installment.total_due:
+        elif installment.paid_amount > 0:
             installment.status = "partial"
         installment.save()
-        serializer.save(remaining_balance=remaining)
-
+        serializer.save(
+            installment=installment,
+            remaining_balance=remaining,
+            principal_portion=amount,
+        )
