@@ -31,7 +31,8 @@ export default function LoginPage() {
       localStorage.setItem('lms_user_roles', JSON.stringify(res.user.roles));
       router.push('/');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      const message = err instanceof Error ? err.message : 'Login failed';
+      setError(message === 'Failed to fetch' ? 'Unable to connect to server. Please try again later.' : message);
     } finally {
       setLoading(false);
     }

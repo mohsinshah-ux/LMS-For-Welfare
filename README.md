@@ -4,6 +4,10 @@
 - **Backend**: Django + Django REST Framework (deploy on Render/Railway/VPS)
 - **Database**: PostgreSQL (production), SQLite (GitHub CI)
 
+## Push to `main` after wrong branch
+
+See [docs/push-to-main.md](docs/push-to-main.md).
+
 ## Deploy from GitHub
 
 ### 1) GitHub CI
