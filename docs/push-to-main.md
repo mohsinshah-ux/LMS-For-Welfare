@@ -26,5 +26,14 @@ git push origin main
 
 ## After push
 
-1. **Vercel** — redeploy from `main`, set `NEXT_PUBLIC_API_URL` to your Django backend URL.
-2. **Render** — set `CORS_ALLOWED_ORIGINS` and `CSRF_TRUSTED_ORIGINS` to your Vercel URL.
+1. **Vercel** → Settings → Git → set **Production Branch** to `main` (not `vercel/react-server-components-*` bot branches).
+2. Redeploy from `main` with **Clear build cache** enabled.
+3. Set `NEXT_PUBLIC_API_URL` to your Django backend URL.
+4. **Render** — set `CORS_ALLOWED_ORIGINS` and `CSRF_TRUSTED_ORIGINS` to your Vercel URL.
+
+## Vercel "Permission denied" on next build
+
+If you see `node_modules/.bin/next: Permission denied`:
+
+- Deploy from `main` after pulling the latest `frontend/vercel.json` fix.
+- In Vercel → Deployments → Redeploy → check **Clear build cache**.

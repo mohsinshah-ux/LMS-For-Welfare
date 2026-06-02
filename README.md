@@ -56,7 +56,8 @@ Default seeded user after `seed_lms`:
 
 - `NEXT_PUBLIC_API_URL=https://<your-render-backend-url>`
 
-5. Deploy (clear build cache once if a previous deploy failed).
+5. Set Vercel **Production Branch** to `main` (not auto `vercel/*` security branches).
+6. Deploy with **Clear build cache** if you see `Permission denied` on `next build`.
 
 Vercel config for the frontend lives in [`frontend/vercel.json`](frontend/vercel.json) only. There is no root `vercel.json` (it caused `frontend/frontend/.next` path errors).
 
