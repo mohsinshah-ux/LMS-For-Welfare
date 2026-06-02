@@ -7,11 +7,15 @@ on:
 
 jobs:
   frontend:
-    name: Frontend Build
+    name: Frontend Build (Vercel + Supabase)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder
+      SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,26 +23,3 @@ jobs:
           node-version: 22
       - run: npm install --no-audit --no-fund --legacy-peer-deps
       - run: npm run build
-        env:
-          NEXT_PUBLIC_API_URL: https://example-backend.onrender.com
-
-  backend:
-    name: Backend Build (Django)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-    env:
-      DJANGO_SECRET_KEY: ci-secret-key
-      DJANGO_DEBUG: "True"
-      USE_SQLITE: "1"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: python -m pip install --upgrade pip
-      - run: pip install -r requirements.txt
-      - run: python manage.py migrate --noinput
-      - run: python manage.py check
-      - run: python manage.py seed_lms

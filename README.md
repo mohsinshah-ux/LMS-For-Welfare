@@ -1,114 +1,37 @@
 # Islamic Banking Loan Management System (LMS)
 
-- **Frontend**: Next.js 15 (deploy on Vercel)
-- **Backend**: Django + Django REST Framework (deploy on Render/Railway/VPS)
-- **Database**: PostgreSQL (production), SQLite (GitHub CI)
-
-## Push to `main` after wrong branch
-
-See [docs/push-to-main.md](docs/push-to-main.md).
-
-## Database on Supabase (optional)
-
-Use Supabase for PostgreSQL and Render only for the Django API: [docs/SUPABASE-DATABASE.md](docs/SUPABASE-DATABASE.md).
-
-## Live app
+**Stack:** Next.js on Vercel + Supabase (database & auth). **No Render.**
 
 - Frontend: [https://lms-for-welfare.vercel.app](https://lms-for-welfare.vercel.app)
-- Full env checklist: [docs/DEPLOY-lms-for-welfare.md](docs/DEPLOY-lms-for-welfare.md)
+- Deploy guide: [docs/DEPLOY-SUPABASE-VERCEL.md](docs/DEPLOY-SUPABASE-VERCEL.md)
 
-## Deploy from GitHub
+## Monorepo layout
 
-### 1) GitHub CI
+| Path | Purpose |
+|------|---------|
+| `frontend/` | Next.js app + `/api/*` routes (Vercel) |
+| `supabase/migrations/` | SQL schema for Supabase |
+| `backend/` | Legacy Django (optional local use only — not deployed) |
+| `docs/` | Architecture & deployment |
 
-Push to `main`. Workflow runs:
+## Quick deploy checklist
 
-- Frontend build (`frontend/`)
-- Django backend check (`backend/`) using SQLite in CI
+1. Run SQL in Supabase → [supabase/migrations/001_lms_schema.sql](supabase/migrations/001_lms_schema.sql)
+2. Create auth user `admin@lms.local` / `Admin@123` in Supabase
+3. Vercel ↔ Supabase integration env vars + `SUPABASE_SERVICE_ROLE_KEY`
+4. Remove `NEXT_PUBLIC_API_URL` from Vercel if present
+5. Redeploy Vercel (root directory `frontend`)
 
-### 2) Backend (Render recommended)
-
-1. Create a **Web Service** from this repo.
-2. Set **Root Directory** to `backend`.
-3. Build command:
-
-```bash
-pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py seed_lms
-```
-
-4. Start command:
-
-```bash
-gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
-```
-
-5. Environment variables:
-
-- `DJANGO_SECRET_KEY` (random secure value)
-- `DJANGO_DEBUG=False`
-- `DATABASE_URL` (Render PostgreSQL connection string)
-- `CORS_ALLOWED_ORIGINS=https://your-app.vercel.app` (exact Vercel URL, no trailing slash)
-- `DJANGO_ALLOWED_HOSTS=your-api.onrender.com`
-
-Or use the included [`render.yaml`](render.yaml) blueprint.
-
-Default seeded user after `seed_lms`:
-
-- Username: `superadmin`
-- Password: `Admin@123`
-
-### 3) Frontend (Vercel)
-
-1. Import GitHub repo in Vercel.
-2. **Required:** Project Settings → General → **Root Directory** = `frontend` → Save.
-3. **Do not** set a custom Output Directory in Vercel (leave default `.next`). The app builds to `frontend/.next` automatically when root is `frontend`.
-4. Set environment variable (critical for login):
-
-- `NEXT_PUBLIC_API_URL=https://islamic-lms-api.onrender.com` (use your real Render URL)
-- Must be **public HTTPS**. **Never** `localhost` or `127.0.0.1` on Vercel.
-- On Render set `CORS_ALLOWED_ORIGINS=https://lms-for-welfare.vercel.app`
-- The browser calls this URL directly (no `/api` proxy).
-
-5. Set Vercel **Production Branch** to `main` (not auto `vercel/*` security branches).
-6. Deploy with **Clear build cache** if you see `Permission denied` on `next build`.
-
-Vercel config for the frontend lives in [`frontend/vercel.json`](frontend/vercel.json) only. There is no root `vercel.json` (it caused `frontend/frontend/.next` path errors).
-
-**Backend is Django only** — there is no Node API in this repo. Deploy API separately (Render) using the `backend/` folder.
-
-## Local development
-
-### Backend
-
-```bash
-cd backend
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-copy .env.example .env
-python manage.py migrate
-python manage.py seed_lms
-python manage.py runserver 8000
-```
-
-### Frontend
+## Local dev
 
 ```bash
 cd frontend
+cp .env.example .env.local
 npm install
-copy .env.example .env.local
-# NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 npm run dev
 ```
 
-## API endpoints
+## Default login (after Supabase user created)
 
-- `GET /health`
-- `POST /auth/login`
-- `GET/POST /customers`
-- `GET/POST /financing-applications`
-- `PATCH /financing-applications/<id>/status`
-- `GET /installments`
-- `POST /installments/generate`
-- `GET/POST /payments`
-- `GET /dashboard/kpis`
+- Email: `admin@lms.local`
+- Password: `Admin@123`

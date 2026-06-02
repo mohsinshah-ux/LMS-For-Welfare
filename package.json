@@ -2,14 +2,9 @@
   "name": "lms-for-welfare",
   "private": true,
   "version": "1.0.0",
-  "description": "Monorepo root — Next.js app lives in frontend/",
+  "description": "Islamic LMS — Vercel + Supabase monorepo",
   "scripts": {
-    "build": "npm run build --prefix frontend",
-    "dev": "npm run dev --prefix frontend"
-  },
-  "dependencies": {
-    "next": "15.2.8",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "dev": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend"
   }
 }

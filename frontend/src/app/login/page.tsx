@@ -2,50 +2,44 @@
 
 import { FormEvent, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiFetch, getApiConfigHint } from '@/lib/api';
 
-const VERCEL_APP = 'https://lms-for-welfare.vercel.app';
-const DEFAULT_RENDER_API = 'https://islamic-lms-api.onrender.com';
+import { getApiConfigHint } from '@/lib/api-config';
+import { createClient } from '@/lib/supabase/client';
 
-type LoginResponse = {
-  accessToken: string;
-  refreshToken: string;
-  user: { username: string; roles?: string[] };
-};
+const APP_URL = 'https://lms-for-welfare.vercel.app';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState('superadmin');
+  const [email, setEmail] = useState('admin@lms.local');
   const [password, setPassword] = useState('Admin@123');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const apiHint = useMemo(() => getApiConfigHint(), []);
 
-  const apiMisconfigured =
-    apiHint.includes('127.0.0.1') ||
-    apiHint.includes('localhost') ||
-    apiHint.includes('missing') ||
-    apiHint.includes('cannot');
-
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (apiMisconfigured) {
-      setError(
-        `Set NEXT_PUBLIC_API_URL=${DEFAULT_RENDER_API} on Vercel and redeploy. See docs/DEPLOY-lms-for-welfare.md`
-      );
-      return;
-    }
     setLoading(true);
     setError(null);
+
     try {
-      const res = await apiFetch<LoginResponse>('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ username, password })
+      const supabase = createClient();
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password
       });
-      localStorage.setItem('lms_access_token', res.accessToken);
-      localStorage.setItem('lms_refresh_token', res.refreshToken);
-      localStorage.setItem('lms_user_roles', JSON.stringify(res.user?.roles ?? []));
+
+      if (authError) {
+        throw new Error(authError.message);
+      }
+
+      if (!data.session) {
+        throw new Error('No session returned. Create the user in Supabase Auth first.');
+      }
+
+      localStorage.setItem('lms_access_token', data.session.access_token);
+      localStorage.setItem('lms_refresh_token', data.session.refresh_token);
+      localStorage.setItem('lms_user_roles', JSON.stringify(['super_admin']));
       router.push('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
@@ -58,25 +52,19 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
       <form onSubmit={onSubmit} className="w-full max-w-md rounded-xl border bg-white p-6 shadow-sm">
         <h1 className="text-xl font-semibold text-slate-900">Islamic LMS Login</h1>
-        <p className="mt-1 text-sm text-slate-600">App: {VERCEL_APP}</p>
-        <p className="mb-2 text-sm text-slate-600">Default: superadmin / Admin@123</p>
-        <p className={`mb-4 break-all text-xs ${apiMisconfigured ? 'text-red-600' : 'text-slate-500'}`}>
-          API: {apiHint}
+        <p className="mt-1 text-sm text-slate-600">App: {APP_URL}</p>
+        <p className="mb-2 break-all text-xs text-slate-500">{apiHint}</p>
+        <p className="mb-4 text-xs text-amber-800">
+          Supabase only — create user in Supabase → Authentication → Users (email + password below).
         </p>
 
-        {apiMisconfigured ? (
-          <p className="mb-4 rounded border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-            On Vercel set <strong>NEXT_PUBLIC_API_URL</strong> to your public Render URL (example:{' '}
-            {DEFAULT_RENDER_API}), then redeploy with clear cache.
-          </p>
-        ) : null}
-
-        <label className="mb-2 block text-sm text-slate-700">Username or Email</label>
+        <label className="mb-2 block text-sm text-slate-700">Email</label>
         <input
           className="mb-4 w-full rounded border p-2"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          autoComplete="username"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
         />
 
         <label className="mb-2 block text-sm text-slate-700">Password</label>
